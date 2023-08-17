@@ -2432,15 +2432,15 @@ public class OssServiceImpl extends CoTopComponent implements OssService {
 				int urlSearchSeq;
 				int seq;
 
-				for (String downloadLocation : downloadLocations) {
+				for (int i = 0 ; i < downloadLocations.length ; i++) {
 					updateCnt = 0;
 					urlSearchSeq = -1;
 					seq = 0;
 
-					paramBean.setDownloadLocation(downloadLocation);
+					paramBean.setDownloadLocation(downloadLocations[i]);
 
 					for (String url : checkOssNameUrl) {
-						if (urlSearchSeq == -1 && downloadLocation.contains(url)) {
+						if (urlSearchSeq == -1 && downloadLocations[i].contains(url)) {
 							urlSearchSeq = seq;
 
 							break;
@@ -2450,8 +2450,8 @@ public class OssServiceImpl extends CoTopComponent implements OssService {
 					}
 
 					if ( urlSearchSeq > -1 ) {
-						Pattern p = generatePattern(urlSearchSeq, downloadLocation);
-						Matcher m = p.matcher(downloadLocation);
+						Pattern p = generatePattern(urlSearchSeq, downloadLocations[i]);
+						Matcher m = p.matcher(downloadLocations[i]);
 						while (m.find()) {
 							paramBean.setDownloadLocation(m.group(0));
 						}
@@ -2477,12 +2477,15 @@ public class OssServiceImpl extends CoTopComponent implements OssService {
 							if (updateCnt >= 1) {
 								String commentId = paramBean.getRefPrjId();
 								String checkOssNameComment = "";
-								String changeOssNameInfo = "<p>" + paramBean.getOssName() + " => " + paramBean.getCheckName() + "</p>";
+								String changeOssNameInfo = "<tr><td>" + paramBean.getOssName() + "</td><td>" + paramBean.getCheckName() + "</td></tr>";
 								CommentsHistory commentInfo = null;
 
 								if (isEmpty(commentId)) {
 									checkOssNameComment = messageSource.getMessage("msg.oss.changed.by.checkossname",null, LocaleContextHolder.getLocale());
 									checkOssNameComment += changeOssNameInfo;
+									if(paramBean.gettableFlag().equals("Y") && i == downloadLocations.length-1){
+										checkOssNameComment += "</table>";
+									}
 									CommentsHistory commHisBean = new CommentsHistory();
 									commHisBean.setReferenceDiv(CoConstDef.CD_DTL_COMMENT_PARTNER_HIS);
 									commHisBean.setReferenceId(paramBean.getReferenceId());
@@ -2498,6 +2501,9 @@ public class OssServiceImpl extends CoTopComponent implements OssService {
 											if (!isEmpty(commentInfo.getContents())) {
 												checkOssNameComment  = commentInfo.getContents();
 												checkOssNameComment += changeOssNameInfo;
+												if(paramBean.gettableFlag().equals("Y") && i == downloadLocations.length-1){
+													checkOssNameComment += "</table>";
+												}
 												commentInfo.setContents(checkOssNameComment);
 
 												commentService.updateComment(commentInfo, false);
@@ -2520,12 +2526,15 @@ public class OssServiceImpl extends CoTopComponent implements OssService {
 							if (updateCnt >= 1) {
 								String commentId = paramBean.getReferenceId();
 								String checkOssNameComment = "";
-								String changeOssNameInfo = "<p>" + paramBean.getOssName() + " => " + paramBean.getCheckName() + "</p>";
+								String changeOssNameInfo = "<tr><td>" + paramBean.getOssName() + "</td><td>" + paramBean.getCheckName() + "</td></tr>";
 								CommentsHistory commentInfo = null;
 
 								if (isEmpty(commentId)) {
 									checkOssNameComment = messageSource.getMessage("msg.oss.changed.by.checkossname",null, LocaleContextHolder.getLocale());
 									checkOssNameComment += changeOssNameInfo;
+									if(paramBean.gettableFlag().equals("Y") && i == downloadLocations.length-1){
+										checkOssNameComment += "</table>";
+									}
 									CommentsHistory commHisBean = new CommentsHistory();
 									commHisBean.setReferenceDiv(CoConstDef.CD_DTL_COMMENT_IDENTIFICAITON_HIS);
 									commHisBean.setReferenceId(paramBean.getRefPrjId());
@@ -2538,6 +2547,9 @@ public class OssServiceImpl extends CoTopComponent implements OssService {
 										if (!isEmpty(commentInfo.getContents())) {
 											checkOssNameComment  = commentInfo.getContents();
 											checkOssNameComment += changeOssNameInfo;
+											if(paramBean.gettableFlag().equals("Y") && i == downloadLocations.length-1){
+												checkOssNameComment += "</table>";
+											}
 											commentInfo.setContents(checkOssNameComment);
 
 											commentService.updateComment(commentInfo, false);
